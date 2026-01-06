@@ -1,0 +1,112 @@
+:root{
+    --background: #f1f1f1;
+    --primary-color: #0d4a67;
+    --secondary-color: #345564;
+    --accent-color: #daae1f;
+    --text-color: #1b1b1b;
+}
+
+*{
+    margin: 0;
+    padding: 0;
+}
+html{
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 16pt;
+    color: var(--background);
+}
+body{
+    min-height: 100vh;
+    padding: 10px;
+    background-color: var(--background);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+h1{
+    margin-top: 60px;
+    margin-bottom: 20px;
+    font-size: 3rem;
+    text-align: center;
+    color: var(--accent-color);
+}
+.wrapper{
+    margin-top: 10px;
+    width: 700px;
+    max-width: 100%; /*on smaller devices this matters*/
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+form{
+    width: 400px;
+    max-width: 50%;
+    position: relative;
+}
+#location-input{
+    padding: 10pt;
+    box-sizing: border-box;
+    height: 50px;
+    width: 100%;
+    background: none;
+    border: 3px solid var(--secondary-color);
+    border-radius: 1000px;
+    font: inherit;
+    color: var(--text-color);
+    caret-color: var(--accent-color);
+}
+#todo-input:focus{
+    outline: none;
+}
+#show-button{
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    background-color: transparent;
+    height: 100%;
+    padding: 0 30px;
+    border: none;
+    border-radius: 1000px;
+    font: inherit;
+    font-size: 600;
+    color: var(--accent-color);
+    cursor: pointer;
+}
+#show-button:hover{
+    background-color: var(--secondary-color);
+    transition: 200ms ease;
+}
+#show-button:active{
+    background-color: var(--primary-color);
+}
+label{
+    color: var(--text-color)
+}
+#location-label{
+    font-size: 30pt;
+    margin-top: 20px;
+}
+#current-weather-wrapper{
+    margin-top: 20px;
+    width: 120px;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    border: 3px var(--primary-color) solid;
+    border-radius: 20px;
+    align-items: center;
+    gap: 5px;
+}
+#weather-forecast-wrapper{
+    margin-top: 50px;
+    display: flex;
+    gap: 25px;
+}
+.daily-weather-card{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
