@@ -43,7 +43,7 @@ form{
     max-width: 50%;
     position: relative;
 }
-#location-input{
+#input-location{
     padding: 10pt;
     box-sizing: border-box;
     height: 50px;

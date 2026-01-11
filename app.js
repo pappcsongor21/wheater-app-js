@@ -7,7 +7,6 @@ loadApiKey()
 
 weatherForm.addEventListener("submit", (e)=>{
     e.preventDefault()
-    console.log("button pressed")
     getWeather()
 })
 
@@ -25,7 +24,7 @@ async function loadApiKey() {
 }
 
 async function getWeather(){
-    input = document.getElementById("")
+    input = document.getElementById("input-location").value
 
     if(input.length == 0){
         console.log("no input, skip")
@@ -45,6 +44,9 @@ async function getLocationAsync(input){
     }
     data = await response.json()
     console.log(data)
+    const lat = data.results[0].geometry.location.lat
+    const long = data.results[0].geometry.location.lng
+    return lat, long
 }
 
 function locationIsFound(input){
