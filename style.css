@@ -80,10 +80,10 @@ form{
 #show-button:active{
     background-color: var(--primary-color);
 }
-label{
+p{
     color: var(--text-color)
 }
-#location-label{
+#location-text{
     font-size: 30pt;
     margin-top: 20px;
 }
