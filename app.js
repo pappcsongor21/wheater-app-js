@@ -23,18 +23,16 @@ async function loadApiKey() {
     }
 }
 
-async function getWeather(){
+async function getWeatherAsnyc(){
     input = document.getElementById("input-location").value
 
-    if(input.length == 0){
-        console.log("no input, skip")
-        return}
+    if (input.length == 0){console.log("no input, skip"); return}
 
-    const location = await getLocationAsync(input)
-
-
-    //if(!locationIsFound(input)){console.error("Location not found")}
-    
+    try {
+        const location = await getLocationAsync(input)
+    } catch(error){
+        console.log(error.message, error)
+    }    
 }
 
 async function getLocationAsync(input){
@@ -43,12 +41,6 @@ async function getLocationAsync(input){
         throw new Error("problem with geocoding api")
     }
     data = await response.json()
-    console.log(data)
-    const lat = data.results[0].geometry.location.lat
-    const long = data.results[0].geometry.location.lng
-    return lat, long
-}
-
-function locationIsFound(input){
-    return true
+    if (data.status = 'ZERO_RESULTS'){ throw new Error("location not found")}
+    return data.results[0].geometry.location
 }
