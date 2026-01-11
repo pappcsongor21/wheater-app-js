@@ -5,6 +5,7 @@ const currentWeatherApiRouteBase = "https://weather.googleapis.com/v1/currentCon
 
 let apiKey = ""
 let currentWeatherInfo = null
+let currentLocation = ""
 
 loadApiKey()
 
@@ -30,6 +31,7 @@ async function showWeather() {
     input = document.getElementById("input-location").value
 
     if (input.length == 0){console.log("no input, skip"); return}
+    currentLocation = input
 
     try {
         const location = await getLocationAsync(input)
@@ -37,7 +39,7 @@ async function showWeather() {
     } catch(error){
         console.log(error.message, error)
     }
-    await updateUI()
+    updateUI()
 }
 
 async function getCurrentWeatherAsnyc(location){
@@ -46,9 +48,11 @@ async function getCurrentWeatherAsnyc(location){
         throw new Error("problem with current weather api")
     }
     const data = await response.json()
+    console.log(data)
+    console.log(data.temperature.degrees)
     return {
-        temp: data.temperature.degrees,
-        condition: data.type, 
+        temperature: data.temperature.degrees,
+        condition: data.weatherCondition.description.text, 
         isDayTime: data.isDayTime
     }
 }
@@ -65,6 +69,14 @@ async function getLocationAsync(input){
     return location
 }
 
-async function updateUI(){
+function updateUI(){
+    const locationText = document.querySelector('#location-text')
+    locationText.innerHTML = currentLocation
 
+    console.log(currentWeatherInfo)
+    const currentWeatherCon = document.querySelector('#current-weather-condition')
+    currentWeatherCon.innerHTML = currentWeatherInfo.condition
+
+    const temp = document.querySelector('#current-temperature')
+    temp.innerHTML = `${currentWeatherInfo.temperature}°C`
 }
