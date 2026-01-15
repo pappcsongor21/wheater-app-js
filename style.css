@@ -85,18 +85,23 @@ p{
 }
 #location-text{
     font-size: 30pt;
-    margin-top: 20px;
+    margin-top: 40px;
 }
 #current-weather-wrapper{
-    margin-top: 20px;
-    width: 120px;
+    margin-top: 50px;
+    width: 160px;
     padding: 5px;
     display: flex;
     flex-direction: column;
     border: 3px var(--primary-color) solid;
     border-radius: 20px;
     align-items: center;
-    gap: 5px;
+    gap: 25px;
+    /* background-color: var(--secondary-color); */
+}
+#current-weather-condition, .temperature{
+    font-size: 24pt;
+    /* color: var(--accent-color); */
 }
 #weather-forecast-wrapper{
     margin-top: 50px;
