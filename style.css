@@ -9,6 +9,8 @@
 *{
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
+
 }
 html{
     font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
@@ -38,15 +40,24 @@ h1{
     flex-direction: column;
     align-items: center;
 }
+#tool-bar{
+    margin-top: 20px;
+    height: 50px;
+    width: 500px;
+    display: flex;
+    padding: 0px 40px;
+    justify-content: space-between;
+    align-items: center;
+}
 form{
-    width: 400px;
-    max-width: 50%;
+    width: 500px;
+    max-width: 70%;
     position: relative;
 }
 #input-location{
     padding: 10pt;
     box-sizing: border-box;
-    height: 50px;
+    height: 100%;
     width: 100%;
     background: none;
     border: 3px solid var(--secondary-color);
@@ -58,26 +69,32 @@ form{
 #todo-input:focus{
     outline: none;
 }
+button{
+    height: 100%;
+    padding: 0 30px;
+    border: solid var(--primary-color) 2px;
+    border-radius: 1000px;
+    font: inherit;
+    color: var(--text-color);
+    cursor: pointer;
+}
 #show-button{
     position: absolute;
     top: 0;
     right: 0;
-
     background-color: transparent;
-    height: 100%;
-    padding: 0 30px;
     border: none;
-    border-radius: 1000px;
-    font: inherit;
-    font-size: 600;
-    color: var(--accent-color);
-    cursor: pointer;
+
 }
-#show-button:hover{
+#button-degree-switch{
+    margin-left: 30px;
+}
+#show-button:hover, #button-degree-switch:hover{
+    color: var(--accent-color);
     background-color: var(--secondary-color);
     transition: 200ms ease;
 }
-#show-button:active{
+#show-button:active, #button-degree-switch:active{
     background-color: var(--primary-color);
 }
 p{
