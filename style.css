@@ -105,9 +105,16 @@ button{
 p{
     color: var(--text-color)
 }
+#loader{
+    margin-top: 150px;
+    display: none;
+}
 #location-text{
     font-size: 30pt;
     margin-top: 40px;
+}
+#wrapper-weather-info{
+    display: none;
 }
 #current-weather-wrapper{
     margin-top: 50px;

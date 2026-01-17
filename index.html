@@ -19,7 +19,17 @@
                 Celsius
             </button>
         </div>
-        <div class="wrapper" id="wrapper-weather-info"></div>
+        <div class="wrapper" id="wrapper-weather-info">
+            <p id="location-text"></p>
+            <div id="current-weather-wrapper">
+                <p id="current-weather-condition"></p>
+                <p class="weather-icon" id="current-weather-icon"></p>
+                <p id="current-temperature" class="temperature" ></p>
+            </div>
+        </div>
+        <div id="loader">
+            <p>Loading...</p>
+        </div>
         <!-- <ul id="weather-forecast-wrapper">
             <li class="daily-weather-card">
                 <p class="day">M</p>

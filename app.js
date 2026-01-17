@@ -1,6 +1,7 @@
 //const language = "hu"
 const weatherForm = document.querySelector('form')
 const switchButton = document.querySelector('#button-degree-switch')
+const loader = document.querySelector('#loader')
 const geocodingApiRouteBase = "https://maps.googleapis.com/maps/api/geocode/json?"//address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=YOUR_API_KEY
 const currentWeatherApiRouteBase = "https://weather.googleapis.com/v1/currentConditions:lookup?"//key=YOUR_API_KEY&location.latitude=LATITUDE&location.longitude=LONGITUDE
 
@@ -12,7 +13,9 @@ let isCelsius = true
 
 weatherForm.addEventListener("submit", (e)=>{
     e.preventDefault()
+    switchLoader()
     showWeather()
+    switchLoader()
 })
 switchButton.addEventListener("click", ()=>{
     switchDegree()
@@ -42,6 +45,7 @@ async function loadApiKey() {
 }
 
 async function showWeather() {
+    hideWeatherInfo()
     input = document.getElementById("input-location").value
 
     if (input.length == 0){console.log("no input, skip"); return}
@@ -98,18 +102,8 @@ async function getLocationAsync(input){
 
 async function updateUI(){
 
-    if(firstUpdate){
-        div = document.querySelector("#wrapper-weather-info")
-        div.innerHTML = `
-        <p id="location-text"></p>
-        <div id="current-weather-wrapper">
-            <p id="current-weather-condition"></p>
-            <p class="weather-icon" id="current-weather-icon"></p>
-            <p id="current-temperature" class="temperature" ></p>
-        </div>
-        `
-        firstUpdate = false
-    }
+    div = document.querySelector("#wrapper-weather-info")
+    div.style.display = 'flex'
 
     const locationText = document.querySelector('#location-text')
     locationText.innerHTML = currentLocation
@@ -140,25 +134,37 @@ async function updateUI(){
     const temp = document.querySelector('#current-temperature')
     temp.innerHTML = `${currentWeatherInfo.temperature}${isCelsius?"°C":"°F"}`
 }
-
+async function hideWeatherInfo(){
+    div = document.querySelector("#wrapper-weather-info")
+    div.style.display = 'none'
+}
+async function switchLoader(){
+    if(loader.style.display == 'block'){
+        loader.style.display = 'none'
+        console.log("it was block now its none")
+    }
+    else{
+        loader.style.display = 'block'
+        console.log("it was none now its block")
+    }
+}
 async function switchDegree(){
     if(isCelsius){
         isCelsius = false;
-        if(!firstUpdate){
+        if(!currentWeatherInfo != null){
         currentWeatherInfo.temperature = (currentWeatherInfo.temperature * 1.8 + 32)}
     }
     else{
         isCelsius = true;
-        if(!firstUpdate){
+        if(!currentWeatherInfo != null){
         currentWeatherInfo.temperature = (currentWeatherInfo.temperature - 32) / 1.8}
     }
 
     switchButton.innerHTML = `${isCelsius?"Celsius":"Fahrenheit"}`
 
-    if(!firstUpdate) {
-        const temp = document.querySelector('#current-temperature')
-        temp.innerHTML = `${(currentWeatherInfo.temperature).toFixed(1)}${isCelsius?"°C":"°F"}`
-    }
+    const temp = document.querySelector('#current-temperature')
+    temp.innerHTML = `${(currentWeatherInfo.temperature).toFixed(1)}${isCelsius?"°C":"°F"}`
+
 }
 async function saveState(){
     const state = {
@@ -169,7 +175,6 @@ async function saveState(){
 }
 async function loadState(){
     const state = JSON.parse(localStorage.getItem("lastState"))
-    console.log(state)
     if(state != null){
         currentLocation = state.currentLocation
         currentWeatherInfo = state.currentWeatherInfo
