@@ -126,11 +126,9 @@ p{
     border-radius: 20px;
     align-items: center;
     gap: 25px;
-    /* background-color: var(--secondary-color); */
 }
 #current-weather-condition, .temperature{
     font-size: 24pt;
-    /* color: var(--accent-color); */
 }
 #weather-forecast-wrapper{
     margin-top: 50px;
