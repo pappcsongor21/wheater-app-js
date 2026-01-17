@@ -10,8 +10,6 @@ let currentLocation = ""
 let firstUpdate = true
 let isCelsius = true
 
-loadApiKey()
-
 weatherForm.addEventListener("submit", (e)=>{
     e.preventDefault()
     showWeather()
@@ -20,6 +18,16 @@ switchButton.addEventListener("click", ()=>{
     switchDegree()
 })
 
+init()
+
+async function init() {
+    await loadApiKey(); // Fontos, hogy megvárd a kulcsot!
+    
+    const needsUpdate = await loadState();
+    if (needsUpdate) {
+        updateUI();
+    }
+}
 async function loadApiKey() {
     try {
         const response = await fetch('GoogleMapsApiKey.txt')
@@ -61,6 +69,7 @@ async function showWeather() {
         }
     }
     updateUI()
+    saveState()
 }
 
 async function getCurrentWeatherAsnyc(location){
@@ -87,7 +96,7 @@ async function getLocationAsync(input){
     return location
 }
 
-function updateUI(){
+async function updateUI(){
 
     if(firstUpdate){
         div = document.querySelector("#wrapper-weather-info")
@@ -136,19 +145,35 @@ async function switchDegree(){
     if(isCelsius){
         isCelsius = false;
         if(!firstUpdate){
-        currentWeatherInfo.temperature = currentWeatherInfo.temperature * 1.8 + 32}
+        currentWeatherInfo.temperature = (currentWeatherInfo.temperature * 1.8 + 32)}
     }
     else{
         isCelsius = true;
         if(!firstUpdate){
-        currentWeatherInfo.temperature = Math.fround((currentWeatherInfo.temperature - 32) / 1.8, 1)}
+        currentWeatherInfo.temperature = (currentWeatherInfo.temperature - 32) / 1.8}
     }
 
     switchButton.innerHTML = `${isCelsius?"Celsius":"Fahrenheit"}`
 
     if(!firstUpdate) {
         const temp = document.querySelector('#current-temperature')
-        temp.innerHTML = `${currentWeatherInfo.temperature}${isCelsius?"°C":"°F"}`
+        temp.innerHTML = `${(currentWeatherInfo.temperature).toFixed(1)}${isCelsius?"°C":"°F"}`
     }
-    
+}
+async function saveState(){
+    const state = {
+        currentLocation : currentLocation,
+        currentWeatherInfo : currentWeatherInfo,
+    }
+    localStorage.setItem("lastState", JSON.stringify(state))
+}
+async function loadState(){
+    const state = JSON.parse(localStorage.getItem("lastState"))
+    console.log(state)
+    if(state != null){
+        currentLocation = state.currentLocation
+        currentWeatherInfo = state.currentWeatherInfo
+        return true
+    }
+    return false
 }
