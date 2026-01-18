@@ -20,13 +20,7 @@ let isCelsius = true
 
 weatherForm.addEventListener("submit", async (e)=>{
     e.preventDefault()
-    showLoader()
-    try{
-        await showWeather()
-    }catch(error){
-
-    }
-
+    showWeather()
 })
 switchButton.addEventListener("click", switchDegree)
 
@@ -81,7 +75,10 @@ async function showWeather() {
     showLoader()
     const input = document.getElementById("input-location").value
 
-    if (!input) return
+    if (!input){
+        hideLoader()
+        return
+    }
     currentLocation = input
 
     try{
