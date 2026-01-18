@@ -23,19 +23,17 @@ weatherForm.addEventListener("submit", async (e)=>{
     showLoader()
     try{
         await showWeather()
+    }catch(error){
+
     }
-    finally{
-        hideLoader()
-    }
+
 })
-switchButton.addEventListener("click", async ()=>{
-    await switchDegree()
-})
+switchButton.addEventListener("click", switchDegree)
 
 init()
 
 async function init() {
-    await loadApiKey(); // Fontos, hogy megvárd a kulcsot!
+    await loadApiKey();
     
     const needsUpdate = await loadState();
     if (needsUpdate) {
@@ -55,38 +53,6 @@ async function loadApiKey() {
     }
 }
 
-async function showWeather() {
-    hideWeatherInfo()
-    input = document.getElementById("input-location").value
-
-    if (input.length == 0){console.log("no input, skip"); return}
-    currentLocation = input
-
-    try {
-        const location = await getLocationAsync(input)
-        currentWeatherInfo = await getCurrentWeatherAsnyc(location)
-    } catch(error){
-        console.log(error.message, error)
-        if(error.message == 'ZERO_RESULTS'){
-            currentLocation = "location not found"
-            currentWeatherInfo = {
-                temperature: "unknown",
-                condition: "unknown",
-                isDayTime: "unknown"
-            }
-        }
-        else if(error.message == "problem with current weather api"){
-            currentWeatherInfo = {
-                temperature: "unknown",
-                condition: "no info",
-                isDayTime: "unknown"
-            }
-        }
-    }
-    updateUI()
-    saveState()
-}
-
 async function getCurrentWeatherAsnyc(location){
     const response = await fetch(`${currentWeatherApiRouteBase}key=${apiKey}&location.latitude=${location.lat}&location.longitude=${location.lng}`)
     if(!response.ok){
@@ -102,54 +68,75 @@ async function getCurrentWeatherAsnyc(location){
 
 async function getLocationAsync(input){
     const response = await fetch(`${geocodingApiRouteBase}address=${input}&key=${apiKey}`)
-    if(!response.ok){
-        throw new Error("problem with geocoding api")
-    }
+    if(!response.ok) throw new Error("GEOCODING_FAILED")
+
     const data = await response.json()
-    if (data.status == 'ZERO_RESULTS'){ throw new Error(`${data.status}`)}
-    const location = data.results[0].geometry.location
-    return location
+    if (data.status == 'ZERO_RESULTS') return null
+
+    return data.results[0].geometry.location 
+}
+
+async function showWeather() {
+    hideWeatherInfo()
+    showLoader()
+    const input = document.getElementById("input-location").value
+
+    if (!input) return
+    currentLocation = input
+
+    try{
+        const location = await getLocationAsync(input)
+
+        if(!location){
+            currentLocation = "location not found"
+            currentWeatherInfo = null
+            updateUI()
+            return
+        }
+
+        currentWeatherInfo = await getCurrentWeatherAsnyc(location)
+        updateUI()
+        saveState()
+    }
+    catch(error){
+        console.error(error)
+        currentLocation = "service unavailable"
+        currentWeatherInfo = null
+        updateUI()
+    }
+    finally{
+        hideLoader()
+    }
 }
 
 async function updateUI(){
-
-    div = document.querySelector("#wrapper-weather-info")
-    div.style.display = 'flex'
-
-    const locationText = document.querySelector('#location-text')
-    locationText.innerHTML = currentLocation
-
-    const currentWeatherCon = document.querySelector('#current-weather-condition')
-    currentWeatherCon.innerHTML = currentWeatherInfo.condition
-
-    let icon 
-    switch(currentWeatherInfo.condition.toLowerCase()){
-        case "sunny":
-            icon = weatherIcons["sunny"]
-            break
-        case "cloudy":
-            icon = weatherIcons["cloudy"]
-            break
-        case "raining":
-            icon = weatherIcons["raining"]
-            break
-        case "snowing":
-            icon = weatherIcons["snowing"]
-            break
-        default:
-            icon = weatherIcons["unknown"]
-    }
-    const currentWeatherIcon = document.querySelector("#current-weather-icon")
-    currentWeatherIcon.innerHTML = icon
-
     switchButton.innerHTML = `${isCelsius?"Celsius":"Fahrenheit"}`
 
-    const temp = document.querySelector('#current-temperature')
-    let temperatureDisplay = isCelsius
+    const wrapper = document.querySelector("#wrapper-weather-info")
+    wrapper.style.display = 'flex'
+    
+    
+    document.querySelector('#location-text').innerHTML = currentLocation
+    if(!currentWeatherInfo){
+        document.querySelector('#current-weather-condition').innerHTML = "No data"
+        document.querySelector("#current-weather-icon").weatherIcons.unknown
+        document.querySelector('#current-temperature').innerHTML = "-"
+        return
+    }
+
+    document.querySelector('#current-weather-condition').innerHTML = 
+        currentWeatherInfo.condition
+    
+    const iconKey = currentWeatherInfo.condition.toLowerCase()
+    document.querySelector("#current-weather-icon").innerHTML =
+        weatherIcons[iconKey] ?? weatherIcons.unknown   
+
+    const temperatureDisplay = isCelsius
         ? currentWeatherInfo.temperature
         : (currentWeatherInfo.temperature * 1.8 + 32)
-    temperatureDisplay = temperatureDisplay.toFixed(1)
-    temp.innerHTML = `${temperatureDisplay}${isCelsius?"°C":"°F"}`
+
+    document.querySelector('#current-temperature').innerHTML = 
+        `${temperatureDisplay.toFixed(1)}${isCelsius?"°C":"°F"}`
 }
 async function hideWeatherInfo(){
     div = document.querySelector("#wrapper-weather-info")
@@ -174,7 +161,7 @@ async function saveState(){
 }
 async function loadState(){
     const state = JSON.parse(localStorage.getItem("lastState"))
-    if(state != null){
+    if(state){
         currentLocation = state.currentLocation
         currentWeatherInfo = state.currentWeatherInfo
         return true
