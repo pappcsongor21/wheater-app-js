@@ -129,6 +129,7 @@ p{
 }
 #current-weather-condition, .temperature{
     font-size: 24pt;
+    text-align: center;
 }
 #weather-forecast-wrapper{
     margin-top: 50px;
