@@ -28,8 +28,8 @@ weatherForm.addEventListener("submit", async (e)=>{
         hideLoader()
     }
 })
-switchButton.addEventListener("click", ()=>{
-    switchDegree()
+switchButton.addEventListener("click", async ()=>{
+    await switchDegree()
 })
 
 init()
@@ -142,8 +142,14 @@ async function updateUI(){
     const currentWeatherIcon = document.querySelector("#current-weather-icon")
     currentWeatherIcon.innerHTML = icon
 
+    switchButton.innerHTML = `${isCelsius?"Celsius":"Fahrenheit"}`
+
     const temp = document.querySelector('#current-temperature')
-    temp.innerHTML = `${currentWeatherInfo.temperature}${isCelsius?"°C":"°F"}`
+    let temperatureDisplay = isCelsius
+        ? currentWeatherInfo.temperature
+        : (currentWeatherInfo.temperature * 1.8 + 32)
+    temperatureDisplay = temperatureDisplay.toFixed(1)
+    temp.innerHTML = `${temperatureDisplay}${isCelsius?"°C":"°F"}`
 }
 async function hideWeatherInfo(){
     div = document.querySelector("#wrapper-weather-info")
@@ -156,22 +162,8 @@ async function hideLoader(){
     loader.style.display = 'none'
 }
 async function switchDegree(){
-    if(isCelsius){
-        isCelsius = false;
-        if(!currentWeatherInfo != null){
-        currentWeatherInfo.temperature = (currentWeatherInfo.temperature * 1.8 + 32)}
-    }
-    else{
-        isCelsius = true;
-        if(!currentWeatherInfo != null){
-        currentWeatherInfo.temperature = (currentWeatherInfo.temperature - 32) / 1.8}
-    }
-
-    switchButton.innerHTML = `${isCelsius?"Celsius":"Fahrenheit"}`
-
-    const temp = document.querySelector('#current-temperature')
-    temp.innerHTML = `${(currentWeatherInfo.temperature).toFixed(1)}${isCelsius?"°C":"°F"}`
-
+    isCelsius = !isCelsius
+    updateUI()
 }
 async function saveState(){
     const state = {
